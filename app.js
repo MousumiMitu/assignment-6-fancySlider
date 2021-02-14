@@ -139,7 +139,9 @@ searchBtn.addEventListener("click", function () {
 
 sliderBtn.addEventListener("click", function () {
   let time = document.getElementById("duration").value;
-  if (time > 0 || 1000) {
+  if (time > 0) {
+    createSlider();
+  } else if (time == "") {
     createSlider();
   } else {
     const btnColor = document.getElementById("create-slider");

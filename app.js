@@ -49,11 +49,11 @@ let slideIndex = 0;
 const selectItem = (event, img) => {
   let element = event.target;
   element.classList.add("added");
-
   let item = sliders.indexOf(img);
   if (item === -1) {
     sliders.push(img);
   } else {
+    sliders.splice(item, 1);
     element.classList.toggle("added");
   }
 };
@@ -64,6 +64,7 @@ const createSlider = () => {
     alert("Select at least 2 image.");
     return;
   }
+
   // crate slider previous next area
   sliderContainer.innerHTML = "";
   const prevNext = document.createElement("div");
@@ -77,8 +78,9 @@ const createSlider = () => {
   sliderContainer.appendChild(prevNext);
   document.querySelector(".main").style.display = "block";
   // hide image aria
+  document.getElementById("duration").value = "";
   imagesArea.style.display = "none";
-  const duration = document.getElementById("duration").value || 3000;
+  const duration = document.getElementById("duration").value > 0 || 1000;
   sliders.forEach((slide) => {
     let item = document.createElement("div");
     item.className = "slider-item";

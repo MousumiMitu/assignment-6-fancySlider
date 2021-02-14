@@ -14,17 +14,24 @@ const KEY = "15674931-a9d714b6e9d654524df198e00&q";
 
 // show images
 const showImages = (images) => {
-  imagesArea.style.display = "block";
-  gallery.innerHTML = "";
-  // show gallery title
-  galleryHeader.style.display = "flex";
-  images.forEach((image) => {
-    let div = document.createElement("div");
-    div.className = "col-lg-3 col-md-4 col-xs-6 img-item mb-2";
-    div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
-    gallery.appendChild(div);
-  });
-  toggleSpinner();
+  const errorInput = document.getElementById("error-message");
+  errorInput.innerText = "";
+  if (images == "") {
+    errorMsg("sorry!! didn't match any keyword");
+    toggleSpinner();
+  } else {
+    imagesArea.style.display = "block";
+    gallery.innerHTML = "";
+    // show gallery title
+    galleryHeader.style.display = "flex";
+    images.forEach((image) => {
+      let div = document.createElement("div");
+      div.className = "col-lg-3 col-md-4 col-xs-6 img-item mb-2";
+      div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
+      gallery.appendChild(div);
+    });
+    toggleSpinner();
+  }
 };
 
 const getImages = (query) => {
@@ -33,8 +40,8 @@ const getImages = (query) => {
     `https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`
   )
     .then((response) => response.json())
-    .then((data) => showImages(data.hits))
-    .catch((err) => console.log(err));
+    .then((data) => showImages(data.hits));
+  // .catch((error) => errorMsg("sorry!! didn't match any keyword"));
 };
 // search button key
 document
@@ -64,7 +71,6 @@ const createSlider = () => {
     alert("Select at least 2 image.");
     return;
   }
-
   // crate slider previous next area
   sliderContainer.innerHTML = "";
   const prevNext = document.createElement("div");
@@ -78,9 +84,9 @@ const createSlider = () => {
   sliderContainer.appendChild(prevNext);
   document.querySelector(".main").style.display = "block";
   // hide image aria
-  document.getElementById("duration").value = "";
   imagesArea.style.display = "none";
-  const duration = document.getElementById("duration").value > 0 || 1000;
+  const duration = document.getElementById("duration").value || 3000;
+
   sliders.forEach((slide) => {
     let item = document.createElement("div");
     item.className = "slider-item";
@@ -122,6 +128,8 @@ const changeSlide = (index) => {
 };
 
 searchBtn.addEventListener("click", function () {
+  const btnColor = document.getElementById("create-slider");
+  btnColor.style.backgroundColor = "#007bff";
   document.querySelector(".main").style.display = "none";
   clearInterval(timer);
   const search = document.getElementById("search");
@@ -130,7 +138,13 @@ searchBtn.addEventListener("click", function () {
 });
 
 sliderBtn.addEventListener("click", function () {
-  createSlider();
+  let time = document.getElementById("duration").value;
+  if (time > 0 || 1000) {
+    createSlider();
+  } else {
+    const btnColor = document.getElementById("create-slider");
+    btnColor.style.backgroundColor = "red";
+  }
 });
 
 // loading spinner
@@ -138,4 +152,9 @@ sliderBtn.addEventListener("click", function () {
 const toggleSpinner = () => {
   const spinner = document.getElementById("spinner");
   spinner.classList.toggle("d-none");
+};
+
+const errorMsg = (error) => {
+  const errorInput = document.getElementById("error-message");
+  errorInput.innerText = error;
 };
